@@ -1,0 +1,32 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# CocoaPods / fastlane
+Pods/
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Secrets / signing
+*.p12
+*.mobileprovision
+*.cer
+.env
+secrets/
+
+# macOS
+.DS_Store
+
+# Node (extension build, if used)
+node_modules/
+dist/
