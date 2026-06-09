@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "TabBridge",
+  "version": "0.1.0",
+  "description": "Open the Safari tabs sent from your iPhone in Chrome on this computer.",
+  "permissions": ["tabs", "nativeMessaging", "notifications", "alarms"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "TabBridge",
+    "default_popup": "popup.html"
+  }
+}

@@ -30,3 +30,12 @@ secrets/
 # Node (extension build, if used)
 node_modules/
 dist/
+
+# Python (relay + native host)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Native-host manifest filled in with machine-specific paths + extension ID
+desktop/native-host/com.tabbridge.host.local.json

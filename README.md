@@ -23,8 +23,24 @@ TabBridge sidesteps that entirely by **never touching Chrome on iOS**:
 The only genuinely version-sensitive unknown is the iOS Safari "read all tabs" permission grant —
 everything downstream is well-trodden API.
 
-**Status:** scaffold / planning. **Designation:** personal tool (with a clear path to a
-desktop-anchored product). **License:** proprietary while private.
+## Code & status
+
+```
+iOS Safari ──POST──▶ relay ──pull──▶ native host ──stdio──▶ Chrome extension ──open──▶ desktop Chrome
+```
+
+| Component | Path | Status |
+|-----------|------|--------|
+| Relay (tab queue, Python stdlib) | [`relay/`](relay) | ✅ implemented + tested |
+| Native-messaging host (Python) | [`desktop/native-host/`](desktop/native-host) | ✅ implemented + tested |
+| Chrome MV3 extension (opens the tabs) | [`desktop/chrome-extension/`](desktop/chrome-extension) | ✅ implemented (load unpacked) |
+| iOS app + Safari Web Extension (capture) | [`ios/`](ios) | ⏳ planned — needs macOS/Xcode |
+
+The **desktop + relay halves run and are tested end-to-end today** (`python run_tests.py`). The iOS
+capture side is the remaining build — see [`ios/README.md`](ios/README.md). Desktop setup is in
+[`desktop/README.md`](desktop/README.md).
+
+**Designation:** personal tool, with a clear path to a desktop-anchored product.
 
 See the full architecture, verified feasibility, transport options, and `claude.ai/design` UX
 prompts in **[docs/PLAN.md](docs/PLAN.md)** and **[docs/FEASIBILITY.md](docs/FEASIBILITY.md)**.

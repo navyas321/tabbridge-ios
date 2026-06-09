@@ -1,0 +1,9 @@
+{
+  "name": "com.tabbridge.host",
+  "description": "TabBridge native-messaging host — pulls queued tabs from the relay.",
+  "path": "PUT_ABSOLUTE_PATH_TO_run-host.bat_OR_run-host.sh_HERE",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://REPLACE_WITH_YOUR_UNPACKED_EXTENSION_ID/"
+  ]
+}
