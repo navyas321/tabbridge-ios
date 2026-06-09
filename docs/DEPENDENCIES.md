@@ -1,7 +1,7 @@
 # Dependencies & License Map — tabbridge-ios
 
-**Proprietary** (private). No third-party copyleft code. Verified 2026-05-30; updated 2026-06-09 for
-the iOS Safari → desktop Chrome direction.
+**Apache-2.0** (see [../LICENSE](../LICENSE)). No third-party copyleft code. Verified 2026-05-30;
+updated 2026-06-09 for the iOS Safari → desktop Chrome direction and Apache-2.0 licensing.
 
 **iOS side**
 - Apple system frameworks (SwiftUI, SafariServices, CloudKit, App Groups) — no license concern.
@@ -16,4 +16,4 @@ the iOS Safari → desktop Chrome direction.
 - CloudKit (`CKSyncEngine`) — Apple framework, Mac-only optional path.
 
 **Discipline:** **No code copied from vibemis (GPL-3.0)** or any copyleft source. Keep deps
-MIT/BSD/Apache; never vendor GPL/AGPL code into this proprietary app.
+MIT/BSD/Apache; never vendor GPL/AGPL code into this Apache-2.0 project.

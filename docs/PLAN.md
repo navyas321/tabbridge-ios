@@ -97,17 +97,13 @@ tabs." Plus the **desktop Chrome popup** — "N tabs from iPhone → Open all / 
 > Symbols, neutral with one accent color, privacy-reassuring, no dark patterns. Light + dark, plus an
 > empty state for the captured-tabs list.
 
-## 7. Commercialization
-- **Designation:** personal tool now, but the **desktop-anchored** shape is the genuinely sellable
-  one — "your phone's tabs, open on your computer, privately." The honest pitch (read Safari, open
-  desktop Chrome, your own relay) has no asterisk.
-- **License:** proprietary while private; could open the iOS extension + desktop extension later
-  (MIT) while keeping a hosted relay option commercial (BSL-1.1 / dual-license).
-- **Freemium:** free = manual "send selected tabs to one paired desktop over your own relay; paid =
-  multiple devices, auto-send rules, history, and a managed (hosted) relay so users who don't run
-  Tailscale still get one-tap setup.
-- **Synergy:** the relay is a natural fit alongside the user's existing tailnet host project — one
-  always-on tailnet service can carry this.
+## 7. Positioning
+- **Designation:** personal tool. The honest pitch — read Safari on iOS, open desktop Chrome over
+  your own private relay — has no asterisk and needs no third-party server.
+- **License:** Apache-2.0 (see [LICENSE](../LICENSE) / [NOTICE](../NOTICE)). Permissive, with an
+  explicit patent grant; the "TabBridge" name is not licensed.
+- **Self-hosting:** the relay is designed to run on the user's own Tailscale tailnet — one
+  always-on tailnet service can carry it alongside other personal services.
 
 ## 8. Repo scaffold (target)
 ```

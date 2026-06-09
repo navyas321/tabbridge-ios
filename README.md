@@ -44,3 +44,8 @@ capture side is the remaining build — see [`ios/README.md`](ios/README.md). De
 
 See the full architecture, verified feasibility, transport options, and `claude.ai/design` UX
 prompts in **[docs/PLAN.md](docs/PLAN.md)** and **[docs/FEASIBILITY.md](docs/FEASIBILITY.md)**.
+
+## License
+
+[Apache-2.0](LICENSE) — permissive, with an explicit patent grant. The "TabBridge" name and logos
+are not licensed (see [NOTICE](NOTICE)). Contributions are welcome under the same license.
