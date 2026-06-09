@@ -3,13 +3,21 @@
 Advisory context for agents. Load-bearing rules belong in CI/hooks, not here (prose is followed ~70% of the time — fine for style, not safety).
 
 ## What this is
-iOS app + Safari Web Extension that moves open tabs between Safari and Chrome. **Read the asymmetry in `docs/PLAN.md` §2 before proposing any "sync" feature — true bidirectional auto-sync is IMPOSSIBLE on iOS and must never be claimed.**
+iOS app + Safari Web Extension that **sends open Safari tabs from iOS to Chrome on a Windows PC or
+Mac** (one-way push). Pipeline: read Safari on iOS → private relay (Tailscale tailnet) → desktop
+native-messaging host → desktop Chrome extension opens them. **Read `docs/PLAN.md` §2–3 and
+`docs/FEASIBILITY.md` before re-scoping.** The direction was corrected 2026-06-09 away from the old
+"same-device Safari↔Chrome on iOS" framing.
 
 ## Ground truth (do not re-litigate)
-- Chrome iOS: no extensions, no tab-read API. `googlechrome-x-callback://` is write-only.
-- Safari tabs are readable only from the extension **background** script, only for granted origins.
-- Chrome→Safari capture is manual (Share Extension, one tab).
-- All tab URLs stay **on-device / user-iCloud**. Never send URLs to any server.
+- We **read Safari on iOS** (supported) and **write Chrome on the desktop** (supported). We never
+  read Chrome on iOS — that's the impossible part, and we don't depend on it.
+- Safari tabs are readable only from the extension **background** script (`browser.tabs.query({})`),
+  for granted origins; the all-tabs grant UX is Safari-version-dependent — spike it first.
+- Desktop side: Chrome MV3 extension + **Native Messaging** host; `chrome.tabs.create()` is
+  unrestricted on desktop (no `x-callback`, no stepper).
+- Transport: **self-hosted relay on the tailnet** (cross-platform, primary). CloudKit is Mac-only.
+  Payload is **URLs + titles only**; do not hand tab data to any third-party server.
 
 ## Workflow
 - Explore → Plan → Implement → Commit for non-trivial changes.

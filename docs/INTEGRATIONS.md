@@ -18,14 +18,21 @@ Curated 2026-05-30. Honest framing: a native SwiftUI app + Safari Web Extension 
 | **Context7** | version-specific docs for the JS/TS side (Playwright, web-ext, MV3) | community | P1 |
 | **App Store Connect MCP / TestFlight Feedback MCP** | conversational build/TestFlight/review ops; pull beta crash+screenshot feedback | community | P2 |
 | **XcodeDocsMCP** | offline installed-SDK symbol docs | community | P2 |
-| **plyvel + protobuf** (desktop companion, later) | read Chrome **Sync Data LevelDB** (`sessions-dt*` → `SessionSpecifics` protos). Copy the dir first (Chrome holds a lock). | community/ref | P2 |
+| **Chrome extension tooling** (`web-ext` lint, Vite/CRXJS, `chrome.runtime` reload) | build/package the **desktop Chrome MV3 extension** (the write side) | community/official | **P0** |
+| **Go/Rust cross-compile + signing** (`goreleaser` / `cargo`, signtool/codesign) | build the **native-messaging host** for Windows + macOS and register it (registry / abs-path manifest) | official OSS | P1 |
 
-## Runtime connectors / APIs (deliberately short)
+## Runtime connectors / APIs
+
+The shipped runtime is a real cross-device pipeline now (not just iOS):
 
 | Name | Use | Notes |
 |------|-----|-------|
-| **CloudKit / CKSyncEngine** | cross-device tab-state sync (iOS app ↔ later desktop companion) | Apple-account-bound; `CKSyncEngine` (iOS 17+) is the modern path |
-| **`googlechrome-x-callback://`** | the one real runtime bridge: open URL in Chrome (`open?url=…&create-new-tab&x-success=…`) + bounce back | one-way push; iOS sandbox limits |
-| **Safari → only `http(s)://`** | no Safari-specific scheme exists; the **Safari Web Extension** (`browser.tabs` + native messaging + App Group) is the Safari-side runtime | MV3 parity gaps (no `webRequest`) |
+| **Safari Web Extension** (`browser.tabs` + native messaging + App Group) | **read** open Safari tabs on iOS (the source) | MV3 parity gaps (no `webRequest`); all-tabs grant UX is version-dependent |
+| **Self-hosted relay (Tailscale tailnet)** | move the tab list iOS → desktop privately (iOS POST, desktop pull) | primary transport; cross-platform (Win **and** Mac); no public server |
+| **CloudKit / CKSyncEngine** | optional **Mac-only** transport alternative | Apple-account-bound; does **not** reach Windows |
+| **Chrome Native Messaging** | desktop host ↔ Chrome extension over stdio | Win: registry-registered host; macOS: abs-path manifest |
+| **Chrome `chrome.tabs.create()`** (desktop) | **open** the tabs in desktop Chrome (the destination) | unrestricted on desktop — no `x-callback`, no stepper |
 
-**Bottom line:** P0 = XcodeBuildMCP + apple-docs-mcp + safari-web-extension-converter + fastlane + `macos-26` runners. The shipped app's only real runtime integrations are **CloudKit** (sync) and **`googlechrome-x-callback://`** (push to Chrome); the Safari side is the extension itself.
+**Bottom line:** P0 dev tools = XcodeBuildMCP + apple-docs-mcp + safari-web-extension-converter +
+fastlane + `macos-26` runners + Chrome-extension tooling. Runtime pipeline = **Safari read (iOS)
+→ tailnet relay → Native Messaging host → `chrome.tabs.create()` (desktop)**.

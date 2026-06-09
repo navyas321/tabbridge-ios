@@ -1,17 +1,37 @@
 # FEASIBILITY — read this before re-litigating the design
 
-Written down so we don't re-argue the asymmetry. All points verification-confirmed (2025-2026).
+**Direction: iOS Safari → desktop Chrome (Windows / macOS).** Corrected 2026-06-09 from the old
+"same-device Safari↔Chrome on iOS" framing. All points verification-confirmed (2025–2026).
 
-## What is IMPOSSIBLE on iOS (non-jailbroken)
-- **Read Chrome's open or synced tabs.** Chrome iOS has no extensions and no read API/URL scheme. Its Google-account sync store is inside Chrome's private sandbox container — unreadable by other apps. (It *is* readable on **desktop** via the Sync LevelDB — that's the commercial pivot, not an iOS path.)
-- **Read iCloud Tabs / observe Handoff** from a third-party app. `NSUserActivity`/Handoff is same-app continuation only; iCloud Tabs live in Safari's private CloudKit scope.
-- Therefore **true bidirectional, live, automatic open-tab sync is impossible.** Don't promise it.
+## The key insight
+The thing iOS makes **impossible** is *reading Chrome's tabs on the phone*. We never do that.
+TabBridge **reads Safari on iOS** (supported) and **writes Chrome on the desktop** (supported).
+By moving the Chrome side to the desktop, every step lands on a well-supported API.
 
-## What IS possible
-- **Read all open Safari tabs** from a Safari Web Extension **background** script via `browser.tabs.query({})` (needs the `tabs` permission; verify the exact all-sites grant UX against the target Safari version — bare `tabs` may now suffice; avoid the scary `<all_urls>` prompt if you can).
-- **Push a URL into Chrome** via `googlechrome-x-callback://x-callback-url/open/?url=…&create-new-tab=true` (write-only). Multi-tab push chains on `x-success`; opening Chrome backgrounds our app, so reliability depends on Chrome returning focus → ship a **"tap to continue" stepper** as the robust fallback, and fall back to plain `https` open if `x-success` stops firing.
-- **Capture one Chrome tab → our queue** via a Share Extension (one page at a time, user-initiated).
-- **Open a URL in Safari** via `tabs.create` or `UIApplication.open(https://…)`.
+## What IS possible (the whole pipeline)
+- **Read all open Safari tabs on iOS** — Safari Web Extension **background** script,
+  `browser.tabs.query({})`, with the `tabs` permission. ⚠️ Verify the all-sites grant UX against the
+  target Safari version (bare `tabs` may now suffice; avoid the scary `<all_urls>` prompt if you can).
+  **This is the one make-or-break unknown — spike it first.**
+- **Open tabs in desktop Chrome** — desktop Chrome MV3 extension, `chrome.tabs.create({url})`.
+  Unrestricted on Windows/macOS/Linux: no per-gesture limit, no `x-callback`, no stepper.
+- **Feed the desktop extension locally** — Chrome **Native Messaging** connects the extension to a
+  native host over stdio. Windows: registry key → manifest path. macOS/Linux: absolute-path JSON
+  manifest. *Confirmed.*
+- **Move the list iOS → desktop privately** — a **self-hosted relay on the user's Tailscale
+  tailnet** (iOS POSTs, desktop pulls). Cross-platform (Windows **and** Mac), no public server, no
+  third-party data custody. CloudKit (`CKSyncEngine`) is an optional **Mac-only** alternative.
+
+## What is IMPOSSIBLE / irrelevant on iOS
+- **Read Chrome's open or synced tabs on iOS** — no extensions, no read API; sync store is in
+  Chrome's private sandbox. *We don't need it — Chrome is read on the desktop, not the phone.*
+- **CloudKit on Windows** — doesn't exist; that's why the **relay** is the primary transport.
+- **Read iCloud Tabs / observe Handoff** from a third-party app — no API. *Irrelevant: we read
+  Safari through our own extension, not via iCloud.*
 
 ## Net product shape
-Asymmetric bridge: **Safari = auto-read**, **Chrome = manual-capture + push target**. Keep all data on-device / user-iCloud, never POST URLs to a server (App Review). The honesty about the asymmetry is the product's credibility.
+**One-way push, all on supported API:** Safari (read, iOS) → private relay (tailnet) → native host
+→ Chrome (write, desktop). The only version-sensitive risk is the iOS Safari all-tabs permission
+grant. URLs + titles only; nothing posted to a third-party server. A reverse path (desktop Chrome →
+iOS Safari) is feasible as a v2 — desktop reads Chrome via `chrome.tabs.query`, iOS Safari opens via
+`tabs.create`.
